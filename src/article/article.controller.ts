@@ -2,7 +2,7 @@ import { Controller, Get, Query, Param } from "@nestjs/common";
 import { ArticleService } from "./article.service";
 
 @Controller("articles")
-export class ArticlesController {
+export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
   @Get()
