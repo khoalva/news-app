@@ -1,12 +1,13 @@
 import { Controller, Get, Query, Param } from "@nestjs/common";
 import { ArticleService } from "./article.service";
+import { queryDto } from "./dto/get-query.dto";
 
 @Controller("articles")
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
   @Get()
-  getArticles(@Query() query) {
+  getArticles(@Query() query: queryDto) {
     return this.articleService.getArticles(query);
   }
 
@@ -20,8 +21,8 @@ export class ArticleController {
     return this.articleService.searchArticles(query);
   }
 
-  @Get("category")
-  getArticlesByCategory(@Query("category") category: string) {
-    return this.articleService.getArticlesByCategory(category);
-  }
+  // @Get("category")
+  // getArticlesByCategory(@Query("category") category: string) {
+  //   return this.articleService.getArticlesByCategory(category);
+  // }
 }
