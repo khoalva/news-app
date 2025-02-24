@@ -10,7 +10,6 @@ async function bootstrap() {
     .setTitle("My API")
     .setDescription("API documentation for my project")
     .setVersion("1.0")
-    .addTag("article")
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
@@ -18,6 +17,6 @@ async function bootstrap() {
 
   await app.listen(3000);
 
-  console.log(`Application is running on: ${await app.getUrl()}`);
+  console.log(`Application is running on: ${await app.getUrl()}/api#/`);
 }
 bootstrap();
