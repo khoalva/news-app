@@ -29,7 +29,7 @@ export class ArticlesController {
     type: String,
     required: true,
     description: "The category name of the articles (required)",
-    example: "Công nghệ",
+    example: "Technology",
   })
   @ApiQuery({
     name: "limit",

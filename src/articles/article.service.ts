@@ -6,7 +6,7 @@ import { Category } from "../schemas/category.schema";
 import { Types } from "mongoose";
 
 interface ArticleQuery {
-  category: Types.ObjectId;
+  category?: Types.ObjectId;
   pubDate?: { $lt?: Date; $gt?: Date };
 }
 
@@ -32,36 +32,35 @@ export class ArticlesService {
     limit: number,
     lastPubDate?: string,
     direction: "newer" | "older" = "older",
-  ): Promise<Article[]> {
-    const categoryDoc = await this.categoryModel
-      .findOne({ name: categoryName })
-      .exec();
-    if (!categoryDoc) throw new Error(`Category ${categoryName} not found`);
+  ): Promise<any> {
+    const sortOrder = direction === "older" ? -1 : 1;
+    const query: ArticleQuery = {};
 
-    // Xây dựng query, giả sử trường category được lưu dưới dạng string trong Article.
-    // Nếu bạn dùng tham chiếu ObjectId, hãy điều chỉnh lại query cho phù hợp.
-    const query: ArticleQuery = { category: categoryDoc._id as Types.ObjectId };
-    if (lastPubDate) {
-      const pubDateCursor = new Date(lastPubDate);
-      if (direction === "older") {
-        // Lấy bài báo cũ hơn: pubDate < lastPubDate
-        query.pubDate = { $lt: pubDateCursor };
-      } else {
-        // Lấy bài báo mới hơn: pubDate > lastPubDate
-        query.pubDate = { $gt: pubDateCursor };
-      }
+    if (categoryName !== "General") {
+      const categoryDoc = await this.categoryModel
+        .findOne({ name: categoryName })
+        .exec();
+      if (!categoryDoc) throw new Error(`Category ${categoryName} not found`);
+      query.category = categoryDoc._id as Types.ObjectId;
     }
 
-    // Với direction "older", sắp xếp theo pubDate giảm dần (bài mới nhất đứng đầu)
-    // Với direction "newer", sắp xếp theo pubDate tăng dần (để sau đó bạn có thể đảo ngược nếu cần)
-    const sortOrder = direction === "older" ? -1 : 1;
+    if (lastPubDate) {
+      const dateCursor = new Date(lastPubDate);
+      if (isNaN(dateCursor.getTime())) {
+        throw new Error("Invalid lastPubDate format");
+      }
+      query.pubDate =
+        direction === "older" ? { $lt: dateCursor } : { $gt: dateCursor };
+    }
 
     return this.articleModel
       .find(query)
+      .select("title description pubDate source_icon image_url _id")
       .sort({ pubDate: sortOrder })
       .limit(limit)
       .exec();
   }
+
   async getArticleById(id: string): Promise<Article | null> {
     return this.articleModel
       .findById(new Types.ObjectId(id))
