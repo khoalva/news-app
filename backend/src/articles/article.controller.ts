@@ -43,7 +43,7 @@ export class ArticlesController {
     type: String,
     required: true,
     description: "The category name of the articles (required)",
-    example: "Technology",
+    example: "General",
   })
   @ApiQuery({
     name: "limit",
@@ -101,7 +101,7 @@ export class ArticlesController {
     name: "id",
     type: String,
     required: true,
-    example: "67bc2f4ac9c0f77ccf87ae81",
+    example: "67ffe1e8a2d76f31d1c230a9",
     description: "The unique identifier of the article (required)",
   })
   @ApiResponse({
